@@ -213,13 +213,27 @@ target_include_directories(${LIBNAME} PUBLIC
   $<BUILD_INTERFACE:${module_dir}>
   $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(${LIBNAME} PUBLIC
-  bacio::bacio
-  crtm::crtm
-  g2::g2_4
-  g2tmpl::g2tmpl
-  MPI::MPI_Fortran
-  NetCDF::NetCDF_Fortran)
+message(STATUS "CMAKE_Fortran_COMPILER_ID: ${CMAKE_Fortran_COMPILER_ID}")
+message(STATUS "The value of CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+string(TOUPPER "$ENV{compiler}" _UPP_COMPILER)
+if(_UPP_COMPILER STREQUAL "ONEAPI")
+  #Change in crtm library from libcrtm.a to libcrtm.so for spack_2.1.1
+  target_link_libraries(${LIBNAME} PUBLIC
+    bacio::bacio
+    crtm::crtm
+    g2::g2_4
+    g2tmpl::g2tmpl
+    MPI::MPI_Fortran
+    NetCDF::NetCDF_Fortran)
+else() 
+  target_link_libraries(${LIBNAME} PUBLIC
+    bacio::bacio
+    crtm::crtm
+    g2::g2_4
+    g2tmpl::g2tmpl
+    MPI::MPI_Fortran
+    NetCDF::NetCDF_Fortran)
+endif()
 
 if(IFI_FOUND)
   if(INTERNAL_IFI)
